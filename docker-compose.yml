@@ -3,7 +3,10 @@ services:
 
   #PHP Service
   app:
-    image: jamal008/wp:php7.3-fpm-alpine
+    build:
+      context: ./php-fpm
+      dockerfile: Dockerfile
+    image: digitalocean.com/php73-alpine
     container_name: app
     restart: unless-stopped
     tty: true
@@ -51,8 +54,8 @@ services:
       MYSQL_ROOT_PASSWORD: test
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
-#    volumes:
-#      - dbdata:/var/lib/mysql/
+    volumes:
+      - dbdata:/var/lib/mysql/
 #      - ./mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - app-network

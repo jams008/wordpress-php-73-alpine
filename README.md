@@ -1,5 +1,5 @@
 # Wordpress php 73 alpine
-Images Docker For Wordpress or other PHP 7.3 alpine \
+Images Docker For Wordpress or other PHP 7.3 alpine 
 
 
 ### Refrence 

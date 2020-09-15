@@ -32,6 +32,8 @@ services:
     container_name: webserver
     restart: unless-stopped
     tty: true
+    environment:
+      DOMAIN_NAME: example.com
     ports:
       - "80:80"
       - "443:443"
@@ -40,6 +42,7 @@ services:
       - ./nginx/conf/:/etc/nginx/conf.d/
     networks:
       - app-network
+    command: /bin/sh -c "envsubst < /etc/nginx/conf.d/template > /etc/nginx/conf.d/app.conf && nginx -s reload"
 
   #MySQL Service
   db2:
@@ -55,8 +58,7 @@ services:
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:
-      - dbdata:/var/lib/mysql/
-#      - ./mysql/my.cnf:/etc/mysql/my.cnf
+      - ./dbdata:/var/lib/mysql/
     networks:
       - app-network
 

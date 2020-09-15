@@ -5,6 +5,7 @@ server {
     access_log /var/log/nginx/access.log;
     server_tokens off;
     root /var/www;
+    server_name ${DOMAIN_NAME};
     location ~ \.php$ {
         try_files $uri =404;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;

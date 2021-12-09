@@ -1,64 +1,55 @@
-version: '3'
+version: '3.9'
 services:
+
+  #MySQL Service
+  db:
+    image: mariadb:10.7
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: "wp"
+      MYSQL_ROOT_PASSWORD: "toor"
+    volumes:
+      - dbdata:/var/lib/mysql/
+    networks:
+      - app-network
 
   #PHP Service
   app:
     build:
       context: ./php-fpm
       dockerfile: Dockerfile
-    image: digitalocean.com/php73-alpine
-    container_name: app
+    image: jams008/wp-php81-alpine
+    depends_on:
+      - db
     restart: unless-stopped
     tty: true
     environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: dev
-      WORDPRESS_DB_HOST: db2
-      MYSQL_ROOT_PASSWORD: test
-      WORDPRESS_DB_NAME: wp
-      WORDPRESS_DB_USER: root
-      WORDPRESS_DB_PASSWORD: test
-      WORDPRESS_TABLE_PREFIX: wp_
+      WORDPRESS_DB_HOST: "db"
+      WORDPRESS_DB_NAME: "wp"
+      WORDPRESS_DB_USER: "root"
+      WORDPRESS_DB_PASSWORD: "toor"
+      WORDPRESS_TABLE_PREFIX: "wp_"
     working_dir: /var/www
     volumes:
-      - ./:/var/www
+      - ./html:/var/www
       - ./php-fpm/conf/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
 
   #Nginx Service
   webserver:
-    image: nginx:1.17.10-alpine
-    container_name: webserver
+    image: nginx:1.21-alpine
     restart: unless-stopped
     tty: true
-    environment:
-      DOMAIN_NAME: example.com
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./:/var/www
+      - ./html:/var/www
       - ./nginx/conf/:/etc/nginx/conf.d/
-    networks:
-      - app-network
-    command: /bin/sh -c "envsubst < /etc/nginx/conf.d/template > /etc/nginx/conf.d/app.conf && nginx -s reload"
-
-  #MySQL Service
-  db2:
-    image: mariadb:10.3
-    container_name: db2
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_DATABASE: wp
-      MYSQL_ROOT_PASSWORD: test
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
-    volumes:
-      - ./dbdata:/var/lib/mysql/
     networks:
       - app-network
 

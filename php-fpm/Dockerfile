@@ -1,4 +1,5 @@
-FROM wordpress:php7.3-fpm-alpine
+#FROM wordpress:php7.3-fpm-alpine
+FROM wordpress:5.8.2-php8.0-fpm-alpine
 
 # Set working directory
 WORKDIR /var/www
